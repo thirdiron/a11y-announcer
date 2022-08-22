@@ -10,6 +10,7 @@ export default {
 
     Router.reopen({
       announcer: service('announcer'),
+      intl: service('intl'),
 
       didTransition() {
         this._super(...arguments);
@@ -19,7 +20,10 @@ export default {
 
           let pageTitle = document.title.trim();
           let serviceMessage = this.get('announcer.message');
-          let message = `${pageTitle} ${serviceMessage}`;
+          // Upstream a11y-announcer allowed for customizing the end of the announcement message
+          // via announcer.message, we'll just leave any customization to the ember-intl translations
+          // file.
+          let message = this.get('intl').t(`route_announcement`, {pageTitle});
 
           this.get('announcer').announce(message, 'polite');
         }, 100);
